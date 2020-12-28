@@ -1,0 +1,13 @@
+[Unit]
+Description=File manager demon
+After=multi-user.target
+
+[Service]
+User=Neznakomec
+Restart=always
+RestartSec=10
+WorkingDirectory=/home/neznakomec/file_manager
+ExecStart=python3 manage.py runserver 0.0.0.0:8000
+
+[Install]
+WantedBy=multi-user.target

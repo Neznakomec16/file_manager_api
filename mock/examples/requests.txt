@@ -1,0 +1,239 @@
+1) upload
+
+curl -F "file=@/some/file/path" 'http://127.0.0.1:8000/files/' -v -H 'Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499'
+* Expire in 0 ms for 6 (transfer 0x55e6ce48ef90)
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55e6ce48ef90)
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+> POST /files/ HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+> Content-Length: 35744
+> Content-Type: multipart/form-data; boundary=------------------------2130a19120ed73b3
+> Expect: 100-continue
+>
+* Expire in 1000 ms for 0 (transfer 0x55e6ce48ef90)
+< HTTP/1.1 100 Continue
+< HTTP/1.1 201 Created
+< Date: Mon, 28 Dec 2020 20:40:29 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: application/json
+< Vary: Accept
+< Allow: GET, POST
+< X-Frame-Options: DENY
+< Content-Length: 124
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"create_date":"2020-12-28T20:37:47.922071Z","file_hash":"55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409"}
+
+2) Get file
+
+curl -XGET 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409' -v -H 'Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499' -L --output file_example
+Note: Unnecessary use of -X or --request, GET is already inferred.
+* Expire in 0 ms for 6 (transfer 0x55fd31797f90)
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x55fd31797f90)
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+> GET /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409 HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 301 Moved Permanently
+< Date: Mon, 28 Dec 2020 20:47:10 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: text/html; charset=utf-8
+< Location: /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/
+< Content-Length: 0
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+  0     0    0     0    0     0      0      0 --:--:-- --:--:-- --:--:--     0
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/'
+* Found bundle for host 127.0.0.1: 0x55fd31796d50 [can pipeline]
+* Could pipeline, but not asked to!
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+* Expire in 0 ms for 6 (transfer 0x55fd31797f90)
+> GET /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/ HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 200 OK
+< Date: Mon, 28 Dec 2020 20:47:10 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: text/html; charset=utf-8
+< Content-Disposition: attachment; filename="55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409"
+< Vary: Accept
+< Allow: GET, DELETE
+< X-Frame-Options: DENY
+< Content-Length: 35544
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+{ [32398 bytes data]
+100 35544  100 35544    0     0  2041k      0 --:--:-- --:--:-- --:--:-- 2041k
+* Connection #0 to host 127.0.0.1 left intact
+
+
+Error:
+
+curl -XGET 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca89' -v -H 'Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499' -L
+Note: Unnecessary use of -X or --request, GET is already inferred.
+* Expire in 0 ms for 6 (transfer 0x56071c33bf90)
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x56071c33bf90)
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+> GET /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca89 HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 301 Moved Permanently
+< Date: Mon, 28 Dec 2020 20:46:13 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: text/html; charset=utf-8
+< Location: /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca89/
+< Content-Length: 0
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca89/'
+* Found bundle for host 127.0.0.1: 0x56071c33ad50 [can pipeline]
+* Could pipeline, but not asked to!
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+* Expire in 0 ms for 6 (transfer 0x56071c33bf90)
+> GET /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca89/ HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 200 OK
+< Date: Mon, 28 Dec 2020 20:46:13 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: application/json
+< Vary: Accept
+< Allow: GET, DELETE
+< X-Frame-Options: DENY
+< Content-Length: 16
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+"File not found"
+
+3) delete file
+
+curl -XDELETE 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409' -v -H 'Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499' -L
+* Expire in 0 ms for 6 (transfer 0x56261b3a0f90)
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x56261b3a0f90)
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+> DELETE /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409 HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 301 Moved Permanently
+< Date: Mon, 28 Dec 2020 20:48:05 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: text/html; charset=utf-8
+< Location: /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/
+< Content-Length: 0
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/'
+* Found bundle for host 127.0.0.1: 0x56261b39fd50 [can pipeline]
+* Could pipeline, but not asked to!
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+* Expire in 0 ms for 6 (transfer 0x56261b3a0f90)
+> DELETE /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/ HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 204 No Content
+< Date: Mon, 28 Dec 2020 20:48:05 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Vary: Accept
+< Allow: GET, DELETE
+< X-Frame-Options: DENY
+< Content-Length: 0
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+
+
+Error:
+
+curl -XDELETE 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409' -v -H 'Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499' -L
+* Expire in 0 ms for 6 (transfer 0x555aed45af90)
+*   Trying 127.0.0.1...
+* TCP_NODELAY set
+* Expire in 200 ms for 4 (transfer 0x555aed45af90)
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+> DELETE /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409 HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 301 Moved Permanently
+< Date: Mon, 28 Dec 2020 20:48:18 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: text/html; charset=utf-8
+< Location: /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/
+< Content-Length: 0
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+* Issue another request to this URL: 'http://127.0.0.1:8000/files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/'
+* Found bundle for host 127.0.0.1: 0x555aed459d50 [can pipeline]
+* Could pipeline, but not asked to!
+* Re-using existing connection! (#0) with host 127.0.0.1
+* Connected to 127.0.0.1 (127.0.0.1) port 8000 (#0)
+* Expire in 0 ms for 6 (transfer 0x555aed45af90)
+> DELETE /files/55eab7d9273acf30e7e18dc3afe0cae510b7b81e54a71ec425f14ed285ca8409/ HTTP/1.1
+> Host: 127.0.0.1:8000
+> User-Agent: curl/7.64.0
+> Accept: */*
+> Authorization: Token 80d4acdb68d85902aa5d8b49186aebca41bad499
+>
+< HTTP/1.1 404 Not Found
+< Date: Mon, 28 Dec 2020 20:48:18 GMT
+< Server: WSGIServer/0.2 CPython/3.7.3
+< Content-Type: application/json
+< Vary: Accept
+< Allow: GET, DELETE
+< X-Frame-Options: DENY
+< Content-Length: 23
+< X-Content-Type-Options: nosniff
+< Referrer-Policy: same-origin
+<
+* Connection #0 to host 127.0.0.1 left intact
+{"detail":"Not found."}

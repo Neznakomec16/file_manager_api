@@ -1,32 +1,29 @@
 from pathlib import Path
 
-from django.views import View
+from django.http import HttpResponse
 from rest_framework import viewsets, permissions
-from rest_framework.exceptions import APIException, MethodNotAllowed
-from rest_framework.parsers import FileUploadParser
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication, TokenAuthentication
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 
 from file_storage.models import File
-from hashlib import sha256
 from file_storage.serializers import FileSerializer
-
-
-class GetFileView(View):
-    def get(self, request, file_hash):
-        print(file_hash)
+from file_storage.utils import create_dir_if_not_exists, get_sha256_hash
+from main_app.settings import TEMP_DIR_PATH, TARGET_DIR_PATH
 
 
 class FilesViewSet(viewsets.ModelViewSet):
-    tempdir = Path('/tmp/file_storage_tempdir')
-    target_dir = Path(Path.home(), 'file_manager')
+    tempdir = TEMP_DIR_PATH
+    target_dir = TARGET_DIR_PATH
 
     queryset = File.objects.all()
     serializer_class = FileSerializer
+    authentication_classes = [TokenAuthentication, BasicAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated, ]
+    http_method_names = ['get', 'post', 'delete']
 
     def perform_create(self, serializer: FileSerializer):
-        if not self.tempdir.exists():
-            self.tempdir.mkdir(parents=True)
+        create_dir_if_not_exists(self.tempdir)
         if not serializer.is_valid():
             return APIException('Something wrong due to uploading. Data is not valid')
 
@@ -36,10 +33,28 @@ class FilesViewSet(viewsets.ModelViewSet):
             chunk_hashes = []
             for chunk in file.chunks():
                 f.write(chunk)
-                chunk_hashes.append(sha256(chunk).hexdigest())
-        file_hash = sha256(''.join(chunk_hashes).encode()).hexdigest()
+                # Чтобы сократить потребляемую память, берём хеш от каждого чанка.
+                chunk_hashes.append(get_sha256_hash(chunk))
+        # после берём хеш от полученных хешей
+        file_hash = get_sha256_hash(''.join(chunk_hashes).encode())
         target_path = self.target_dir.joinpath(file_hash[:2], file_hash)
-        if not target_path.parent.exists():
-            target_path.parent.mkdir(parents=True)
+        create_dir_if_not_exists(target_path.parent)
         temp_file.replace(target_path)
         serializer.save(file_hash=file_hash, file_path=target_path.as_posix())
+
+    def retrieve(self, request, *args, **kwargs):
+        file_hash = kwargs.get('pk')
+        file = File.objects.filter(file_hash=file_hash)
+        if file.exists():
+            file = file[0]
+            if not Path(file.file_path).exists():
+                # если запись о файле есть в бд, но сам файл удалили из хранилища
+                file.delete()
+                return Response('File was deleted from storage')
+            with open(file.file_path, 'rb') as f:
+                file_body = f.read()
+            response = HttpResponse(file_body)
+            response['Content-Disposition'] = f'attachment; filename="{file.file_hash}"'
+            return response
+        else:
+            return Response('File not found')
