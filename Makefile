@@ -1,9 +1,16 @@
 main: install
+	sudo chmod 644 file_manager.service;
 	sudo cp file_manager.service /etc/systemd/system/;
-	sudo systemctl start file_manager;
-	sudo systemctl enable file_manager
+	sudo systemctl daemon-reload;
+	sudo systemctl enable file_manager.service
+
 
 install:
 	sudo apt install python3-pip python3-dev curl;
-	pip3 install -r requirements.txt;
+	sudo pip3 install -r requirements.txt;
 	python3 manage.py migrate
+
+
+createsuperuser:
+	python3 manage.py createsuperuser --username $(USERNAME) --noinput --email $(EMAIL)
+	python3 manage.py drf_create_token $(USERNAME)

@@ -1,13 +1,12 @@
 [Unit]
-Description=File manager demon
+Description=File manager daemon
 After=multi-user.target
 
 [Service]
-User=Neznakomec
 Restart=always
-RestartSec=10
-WorkingDirectory=/home/neznakomec/file_manager
-ExecStart=python3 manage.py runserver 0.0.0.0:8000
+RestartSec=30
+WorkingDirectory=/home/neznakomec/PycharmProjects/file_manager_api
+ExecStart=gunicorn -w 4 --bind 0.0.0.0:8000 main_app.wsgi
 
 [Install]
 WantedBy=multi-user.target
