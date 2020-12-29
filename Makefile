@@ -8,7 +8,8 @@ main: install
 install:
 	sudo apt install python3-pip python3-dev curl;
 	sudo pip3 install -r requirements.txt;
-	python3 manage.py migrate
+	python3 manage.py migrate;
+	python3 manage.py collectstatic;
 
 
 createsuperuser:
