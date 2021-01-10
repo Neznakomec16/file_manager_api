@@ -41,7 +41,7 @@ make
 `python3 manage.py changepassword SOME_SUPERUSER`
 
 
-Для безопасности в среде окнужения следует определить `FILE_MANAGER_DJANGO_SECRET_KEY`
+Для безопасности в среде окружения следует определить `FILE_MANAGER_DJANGO_SECRET_KEY`
 
 ```
 export FILE_MANAGER_DJANGO_SECRET_KEY="SOME_SECRET_KEY"
